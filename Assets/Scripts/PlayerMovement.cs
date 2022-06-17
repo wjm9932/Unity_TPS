@@ -2,6 +2,7 @@
 
 public class PlayerMovement : MonoBehaviour
 {
+    private PlayerShooter playerShooter;
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Animator animator;
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        playerShooter = GetComponent<PlayerShooter>();
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
@@ -34,11 +36,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (currentSpeed > 0.2f || playerInput.fire) Rotate();
+        if (currentSpeed > 0.2f || playerInput.fire || playerShooter.aimState == PlayerShooter.AimState.HipFire)
+        {
+            Rotate();
+        }
 
         Move(playerInput.moveInput);
 
-        if (playerInput.jump) Jump();
+        if (playerInput.jump)
+        {
+            Jump();
+        }
     }
 
     private void Update()
@@ -49,7 +57,9 @@ public class PlayerMovement : MonoBehaviour
     public void Move(Vector2 moveInput)
     {
         var targetSpeed = moveInput.magnitude * speed;
-        var moveDir = Vector3.Normalize(transform.forward * moveInput.y + transform.right * moveInput.x);
+        Vector3 moveDir = Vector3.Normalize(transform.forward * moveInput.y + transform.right * moveInput.x);
+        Debug.Log(moveDir);
+
         float smoothTime;
 
         if (characterController.isGrounded == true)
@@ -98,8 +108,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateAnimation(Vector2 moveInput)
     {
-        var animationSpeedPercent = currentSpeed / speed;
-        animator.SetFloat("Vertical Move", moveInput.y * animationSpeedPercent, 0.05f, Time.deltaTime);
-        animator.SetFloat("Horizontal Move", moveInput.x * animationSpeedPercent, 0.05f, Time.deltaTime);
+        animator.SetFloat("Vertical Move", moveInput.y, 0.05f, Time.deltaTime);
+        animator.SetFloat("Horizontal Move", moveInput.x, 0.05f, Time.deltaTime);
     }
 }
