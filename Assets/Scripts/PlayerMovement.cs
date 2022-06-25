@@ -58,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
     {
         var targetSpeed = moveInput.magnitude * speed;
         Vector3 moveDir = Vector3.Normalize(transform.forward * moveInput.y + transform.right * moveInput.x);
-        Debug.Log(moveDir);
 
         float smoothTime;
 

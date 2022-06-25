@@ -37,7 +37,8 @@ public class Crosshair : MonoBehaviour
         {
             return;
         }
-
+        //Debug.Log("Aim" + aimPointReticle.transform.position);
+        //Debug.Log("Hit" + hitPointReticle.transform.position);
         crossHairRectTransform.position = Vector2.SmoothDamp(crossHairRectTransform.position, targetPoint, ref currentHitPointVelocity, smoothTime);
     }
 }

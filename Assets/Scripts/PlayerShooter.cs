@@ -126,10 +126,12 @@ public class PlayerShooter : MonoBehaviour
         if (Physics.Raycast(ray, out hit, gun.fireDistance, ~excludeTarget) == true)
         {
             aimPoint = hit.point;
+            Debug.Log("1" + aimPoint);
 
-            if(Physics.Linecast(gun.fireTransform.position, hit.point, out hit, ~excludeTarget) == true)
+            if (Physics.Linecast(gun.fireTransform.position, hit.point, out hit, ~excludeTarget) == true)
             {
                 aimPoint = hit.point;
+                Debug.Log("2" + aimPoint);
             }
         }
         else
