@@ -43,7 +43,7 @@ public class Enemy : LivingEntity
     public float viewDistance = 10f;
     public float patrolSpeed = 3f;
     
-    [HideInInspector] public LivingEntity targetEntity;
+    public LivingEntity targetEntity;
     public LayerMask whatIsTarget;
 
 
@@ -57,20 +57,48 @@ public class Enemy : LivingEntity
 
     private void OnDrawGizmosSelected()
     {
+        if(attackRoot != null)
+        {
+            Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+            Gizmos.DrawSphere(attackRoot.position, attackRadius);
+        }
 
+        if(eyeTransform != null)
+        {
+            var leftEyeRotaion = Quaternion.AngleAxis(-fieldOfView * 0.5f, Vector3.up);
+            var leftRayDir = leftEyeRotaion * transform.forward;
+            Handles.color = new Color(1f, 1f, 1f, 0.2f);
+            Handles.DrawSolidArc(eyeTransform.position, Vector3.up, leftRayDir, fieldOfView, viewDistance);
+        }
     }
     
 #endif
     
     private void Awake()
     {
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        audioPlayer = GetComponent<AudioSource>();
+        skinRenderer = GetComponentInChildren<Renderer>();
 
+        var attackPivot = attackRoot.position;
+        attackPivot.y = transform.position.y;
+        attackDistance = Vector3.Distance(transform.position, attackPivot) + attackRadius;
+
+        agent.stoppingDistance = attackDistance;
+        agent.speed = patrolSpeed;
     }
 
-    public void Setup(float health, float damage,
-        float runSpeed, float patrolSpeed, Color skinColor)
+    public void Setup(float health, float damage, float runSpeed, float patrolSpeed, Color skinColor)
     {
+        this.startingHealth = health;
+        this.health = health;
+        this.damage = damage;
+        this.runSpeed = runSpeed;
+        this.patrolSpeed = patrolSpeed;
 
+        skinRenderer.material.color = skinColor;
+        agent.speed = patrolSpeed;
     }
 
     private void Start()
